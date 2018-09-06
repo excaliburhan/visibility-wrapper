@@ -1,21 +1,33 @@
-import { stop, change, every, hidden } from 'visibilityjs';
+import { unbind, stop, change, every, hidden } from 'visibilityjs';
 
 var isSupported = document.hidden !== undefined;
 var ids = [];
 var timerState = 'visible';
 
-var VisibilityStop = stop;
+function VisibilityStop(id) {
+  var index = ids.findIndex(function (v) {
+    return v === id;
+  });
+  if (index !== -1) {
+    ids.splice(index, 1); // 删除 id
+  }
+  if (isSupported) {
+    return unbind(id);
+  }
+  return stop(id);
+}
 function VisibilityClear() {
   ids.forEach(function (id) {
-    stop(id);
+    VisibilityStop(id);
   });
 }
 function VisibilityChange(callback) {
   if (isSupported) {
-    change(function (e, state) {
+    var _id = change(function (e, state) {
       callback(state);
     });
-    return false;
+    ids.push(_id);
+    return _id;
   }
   var id = every(1000, 1000, function () {
     var state = hidden() ? 'hidden' : 'visible';

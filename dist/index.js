@@ -8,18 +8,30 @@
   var ids = [];
   var timerState = 'visible';
 
-  var VisibilityStop = Visibility.stop;
+  function VisibilityStop(id) {
+    var index = ids.findIndex(function (v) {
+      return v === id;
+    });
+    if (index !== -1) {
+      ids.splice(index, 1); // 删除 id
+    }
+    if (isSupported) {
+      return Visibility.unbind(id);
+    }
+    return Visibility.stop(id);
+  }
   function VisibilityClear() {
     ids.forEach(function (id) {
-      Visibility.stop(id);
+      VisibilityStop(id);
     });
   }
   function VisibilityChange(callback) {
     if (isSupported) {
-      Visibility.change(function (e, state) {
+      var _id = Visibility.change(function (e, state) {
         callback(state);
       });
-      return false;
+      ids.push(_id);
+      return _id;
     }
     var id = Visibility.every(1000, 1000, function () {
       var state = Visibility.hidden() ? 'hidden' : 'visible';

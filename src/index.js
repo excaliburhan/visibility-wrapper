@@ -1,21 +1,31 @@
 import * as Visibility from 'visibilityjs'
 
 const isSupported = document.hidden !== undefined
-const ids = []
+let ids = []
 let timerState = 'visible'
 
-export const VisibilityStop = Visibility.stop
+export function VisibilityStop (id) {
+  let index = ids.findIndex(v => v === id)
+  if (index !== -1) {
+    ids.splice(index, 1) // 删除 id
+  }
+  if (isSupported) {
+    return Visibility.unbind(id)
+  }
+  return Visibility.stop(id)
+}
 export function VisibilityClear () {
   ids.forEach(id => {
-    Visibility.stop(id)
+    VisibilityStop(id)
   })
 }
 export function VisibilityChange (callback) {
   if (isSupported) {
-    Visibility.change((e, state) => {
+    const id = Visibility.change((e, state) => {
       callback(state)
     })
-    return false
+    ids.push(id)
+    return id
   }
   const id = Visibility.every(1000, 1000, () => {
     let state = Visibility.hidden() ? 'hidden' : 'visible'
