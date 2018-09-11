@@ -1,10 +1,15 @@
 {
   "name": "visibility-wrapper",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A wrapper use for visilibity-js",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "license": "MIT",
+  "author": "xiaoping(edwardhjp@gmail.com)",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/excaliburhan/visibility-wrapper.git"
+  },
   "scripts": {
     "prepublishOnly": "npm run build",
     "dev": "rollup -c -w",
